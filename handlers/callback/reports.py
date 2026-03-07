@@ -14,6 +14,11 @@ async def handle_report_vote(callback: CallbackQuery, user: User):
         await callback.answer("Ariza topilmadi")
         return
     choice = callback.data.split("_")[1]
+    
+    exists = await ReportVote.filter(report=report, user=user).first()
+    if exists:
+        await exists.delete()
+    
     await ReportVote.create(report=report, user=user, vote=choice)
 
     yes_votes = await ReportVote.filter(report=report, vote="yes").count()
