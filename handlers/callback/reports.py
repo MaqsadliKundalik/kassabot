@@ -6,7 +6,7 @@ from keyboards import vote_btn, more_view_btn
 
 router = Router()
 
-@router.callback_query(F.data.startswith("report_"))
+@router.callback_query(F.data.startswith("vote_"))
 async def handle_report_vote(callback: CallbackQuery, user: User):
     report_id = int(callback.data.split("_")[-1])
     report = await Report.get(report_id)
