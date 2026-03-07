@@ -24,7 +24,7 @@ async def caption(message: Message, state: FSMContext):
 async def price(message: Message, state: FSMContext, user: User):
     data = await state.get_data()
     report = Report(
-        user_id=message.from_user.id,
+        user=user,
         caption=data["caption"],
         price=message.text
     )

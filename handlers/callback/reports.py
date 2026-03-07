@@ -16,8 +16,8 @@ async def handle_report_vote(callback: CallbackQuery, user: User):
     choice = callback.data.split("_")[1]
     await ReportVote.create(report=report, user=user, vote=choice)
 
-    yes_votes = await ReportVote.filter(report=report, vote="yes").count()
-    no_votes = await ReportVote.filter(report=report, vote="no").count()
+    yes_votes = await ReportVote.filter(report=report, user=user, vote="yes").count()
+    no_votes = await ReportVote.filter(report=report, user=user, vote="no").count()
     
     if yes_votes + no_votes == 5:
         if yes_votes >= 3:
