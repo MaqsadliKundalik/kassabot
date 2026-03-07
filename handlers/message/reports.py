@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.types import Message, user
 from aiogram.filters import Command
 from models.main import Report, User
@@ -9,7 +9,7 @@ from states import ReportStates
 
 router = Router()
 
-@router.message(Command("reports"))
+@router.message(F.text == "Ariza berish")
 async def reports(message: Message, state: FSMContext):
     await state.set_state(ReportStates.caption)
     await message.answer("Kassadan nima uchun pul olmoqchisiz?")
