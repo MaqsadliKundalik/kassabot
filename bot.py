@@ -3,6 +3,9 @@ from config import BOT_TOKEN
 from asyncio import run
 from middlewares.users import UserMiddleware
 from handlers import router
+from logging import basicConfig, INFO
+
+basicConfig(level=INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
