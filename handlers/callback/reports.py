@@ -9,15 +9,15 @@ router = Router()
 @router.callback_query(F.data.startswith("vote_"))
 async def handle_report_vote(callback: CallbackQuery, user: User):
     report_id = int(callback.data.split("_")[-1])
-    report = await Report.get(report_id)
+    report = await Report.get_or_none(id=report_id)
     if not report:
         await callback.answer("Ariza topilmadi")
         return
     choice = callback.data.split("_")[1]
     await ReportVote.create(report=report, user=user, vote=choice)
 
-    yes_votes = await ReportVote.filter(report=report, user=user, vote="yes").count()
-    no_votes = await ReportVote.filter(report=report, user=user, vote="no").count()
+    yes_votes = await ReportVote.filter(report=report, vote="yes").count()
+    no_votes = await ReportVote.filter(report=report, vote="no").count()
     
     if yes_votes + no_votes == 5:
         if yes_votes >= 3:
@@ -35,10 +35,12 @@ async def handle_report_vote(callback: CallbackQuery, user: User):
 @router.callback_query(F.data.startswith("more_"))
 async def handle_more_view(callback: CallbackQuery):
     report_id = int(callback.data.split("_")[-1])
-    report = await Report.get(report_id).prefetch_related("user")
+    report = await Report.get_or_none(id=report_id)
     if not report:
         await callback.answer("Ariza topilmadi")
         return
+    await report.fetch_related("user")
+
     yes_count = await ReportVote.filter(report=report, vote="yes").count()
     no_count = await ReportVote.filter(report=report, vote="no").count()
     await callback.message.edit_text(f"<b>Ariza {report.id}</b>:\nArizachi: {report.user.name}\n\n{report.caption}\n\nSumma: {report.price}\n✅ {yes_count}  ❌ {no_count}", parse_mode="HTML")
