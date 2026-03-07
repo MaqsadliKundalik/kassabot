@@ -32,8 +32,10 @@ async def handle_report_vote(callback: CallbackQuery, user: User):
             for admin_id in ADMINS:
                 await callback.bot.send_message(admin_id, f"❌ Ariza {report.id} yetarlicha ovoz yig'madi", reply_markup=more_view_btn(report_id=report.id))
 
-
-    await callback.message.edit_reply_markup(reply_markup=vote_btn(report.id, yes_votes, no_votes))
+    try:
+        await callback.message.edit_reply_markup(reply_markup=vote_btn(report.id, yes_votes, no_votes))
+    except:
+        pass
     await callback.answer()
 
 
