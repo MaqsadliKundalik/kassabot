@@ -22,11 +22,46 @@ async def caption(message: Message, state: FSMContext):
     
 @router.message(ReportStates.price)
 async def price(message: Message, state: FSMContext, user: User):
+    price_text = message.text.strip()
+    
+    cleaned_price = price_text.replace(' ', '').replace(',', '')
+    
+    if not cleaned_price.replace('.', '').isdigit():
+        await message.answer("❌ Noto'g'ri format! Iltimos, faqat son kiriting (masalan: 50000, 50 000, 50.500)")
+        return
+    
+    try:
+        if '.' in cleaned_price:
+            parts = cleaned_price.split('.')
+            if len(parts) > 2:
+                await message.answer("❌ Noto'g'ri format! Iltimos, faqat bitta nuqta ishlating (masalan: 50.500)")
+                return
+            
+            whole_part = parts[0] if parts[0] else '0'
+            decimal_part = parts[1] if len(parts) > 1 else '0'
+            
+            if len(decimal_part) > 2:
+                price_value = int(whole_part + decimal_part)
+            else:
+                whole = int(whole_part) if whole_part else 0
+                tiyin = int(decimal_part.ljust(2, '0')[:2])
+                price_value = whole * 100 + tiyin
+        else:
+            price_value = int(cleaned_price)
+        
+        if price_value <= 0:
+            await message.answer("❌ Summa musbat son bo'lishi kerak! Iltimos, qaytadan kiriting:")
+            return
+            
+    except ValueError:
+        await message.answer("❌ Noto'g'ri format! Iltimos, faqat son kiriting (masalan: 50000, 50 000, 50.500)")
+        return
+    
     data = await state.get_data()
     report = Report(
         user=user,
         caption=data["caption"],
-        price=message.text
+        price=price_value
     )
     await message.bot.send_message(
         chat_id=KASSA_CHAT_ID, 

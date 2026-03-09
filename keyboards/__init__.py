@@ -17,3 +17,17 @@ def more_view_btn(report_id: int):
     builder.button(text="Batafsil", callback_data=f"more_{report_id}")
     builder.adjust(1)
     return builder.as_markup()
+
+admin_menu = ReplyKeyboardBuilder()
+admin_menu.button(text="Kassaga pul qo'shish")
+admin_menu.button(text="Kassa hisoboti")
+admin_menu.adjust(1)
+admin_menu = admin_menu.as_markup(resize_keyboard=True)
+
+
+def confirm_btn(report_id: int):
+    confirm_btn = InlineKeyboardBuilder()
+    confirm_btn.button(text="Tasdiqlash", callback_data=f"confirm_{report_id}")
+    confirm_btn.button(text="Bekor qilish", callback_data=f"cancel_{report_id}")
+    confirm_btn.adjust(2)
+    return confirm_btn.as_markup()
