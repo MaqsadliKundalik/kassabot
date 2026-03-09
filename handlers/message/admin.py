@@ -9,6 +9,7 @@ from states import AdminStates
 from openpyxl import Workbook
 from datetime import datetime
 import io
+from tortoise.functions import Sum
 
 router = Router()
 
@@ -130,7 +131,14 @@ async def kassa_report(message: Message):
 
 @router.message(Command("balance"))
 async def balance_command(message: Message):
-    sum_income = await KassaFlow.sum_income()
-    sum_outcome = await KassaFlow.sum_outcome()
-    balance = sum_income - sum_outcome
-    await message.answer(f"Balans: {balance:,.2f} so'm")
+    try:
+        sum_income_result = await InOutFlow.filter(type="income").annotate(total=Sum("amount")).first()
+        sum_outcome_result = await InOutFlow.filter(type="outcome").annotate(total=Sum("amount")).first()
+        
+        sum_income = sum_income_result.total if sum_income_result and sum_income_result.total else 0
+        sum_outcome = sum_outcome_result.total if sum_outcome_result and sum_outcome_result.total else 0
+        balance = sum_income - sum_outcome
+        
+        await message.answer(f"💰 Balans: {balance:,.2f} so'm\n\n📈 Jami kirim: {sum_income:,.2f} so'm\n📉 Jami chiqim: {sum_outcome:,.2f} so'm")
+    except Exception as e:
+        await message.answer(f"❌ Balansni hisoblashda xatolik: {str(e)}")
