@@ -125,7 +125,7 @@ async def kassa_report(message: Message):
         
         await message.answer_document(
             document=document,
-            caption=f"📊 Kassa hisoboti\n\nJami kirim: {total_income:,.2f} so'm\nJami chiqim: {total_outcome:,.2f} so'm\nQoldiq: {balance:+,2f} so'm"
+            caption=f"📊 Kassa hisoboti\n\nJami kirim: {total_income:,.2f} so'm\nJami chiqim: {total_outcome:,.2f} so'm\nQoldiq: {balance:+,.2f} so'm"
         )
         
     except Exception as e:
