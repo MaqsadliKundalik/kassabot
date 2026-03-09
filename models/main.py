@@ -38,9 +38,4 @@ class InOutFlow(Model):
     
     class Meta:
         table = "inoutflows"
-    
-    async def save(self, *args, **kwargs):
-        if not self.created_at:
-            self.created_at = get_tashkent_time()
-        await super().save(*args, **kwargs)
 

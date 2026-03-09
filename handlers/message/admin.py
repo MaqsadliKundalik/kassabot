@@ -3,7 +3,7 @@ from aiogram.types import Message, BufferedInputFile
 from aiogram.filters import Command
 from models.main import InOutFlow, User
 from aiogram.fsm.context import FSMContext
-from config import KASSA_CHAT_ID, ADMINS, get_tashkent_time
+from config import KASSA_CHAT_ID, ADMINS, get_tashkent_time, TASHKENT_OFFSET
 from keyboards import vote_btn, admin_menu
 from states import AdminStates
 from openpyxl import Workbook
@@ -82,7 +82,9 @@ async def kassa_report(message: Message):
             ws.cell(row=1, column=col, value=header)
         
         for row, flow in enumerate(flows, 2):
-            ws.cell(row=row, column=1, value=flow.created_at.strftime("%d.%m.%Y %H:%M"))
+            # Convert UTC to Tashkent time
+            tashkent_time = flow.created_at + TASHKENT_OFFSET
+            ws.cell(row=row, column=1, value=tashkent_time.strftime("%d.%m.%Y %H:%M"))
             ws.cell(row=row, column=2, value=flow.user.name)
             ws.cell(row=row, column=3, value="Kirim" if flow.type == "income" else "Chiqim")
             ws.cell(row=row, column=4, value=float(flow.amount))
