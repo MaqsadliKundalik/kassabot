@@ -128,3 +128,9 @@ async def kassa_report(message: Message):
     except Exception as e:
         await message.answer(f"❌ Hisobotni yaratishda xatolik: {str(e)}")
 
+@router.message(Command("balance"))
+async def balance_command(message: Message):
+    sum_income = await KassaFlow.sum_income()
+    sum_outcome = await KassaFlow.sum_outcome()
+    balance = sum_income - sum_outcome
+    await message.answer(f"Balans: {balance:,.2f} so'm")
